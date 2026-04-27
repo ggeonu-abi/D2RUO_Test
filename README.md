@@ -75,6 +75,7 @@
 | | `Tab` | (검색창 내) 유니크 / 룬워드 탭 전환 |
 | | `↑` / `↓` | (검색창 내) 검색 결과 상하 이동 |
 | | `ESC` | 검색창 닫기 |
+| **아이템 자동 인식** | `Ctrl` + `R` | 아이템 자동 인식 영역 캡쳐 시작 |
 | **버프 타이머** | `PageUp` / `PageDown` | 버프 스킬 프로필 전환 |
 | | 사용자가 설정한 키 | 지정한 버프 타이머 실행 |
 | **스피드런 타이머** | `Home` | 타이머 시작 / 일시정지 |
@@ -133,6 +134,13 @@
 | `sounds/` | 버프 종료 임박 시 사용할 사용자 지정 알림음 보관 폴더 |
 | `item/data/` | 아이템 사전 검색에 사용되는 데이터베이스 파일(`.json`, `.tsv`) 보관 폴더 |
 | `fonts/` | 폰트 폴더 (현재 배포 저작권 문제가 없는 폰트 파일만 추가되어 있습니다. 원하시는 폰트를 직접 추가해서 사용하세요.) |
+| `models/` | 아이템 자동인식에 필요한 모듈들이 저장되는 폴더 |
+
+---
+
+> **⚖️ 오픈소스 라이선스 고지:**
+> * 본 프로그램은 LGPLv3 라이선스를 따르는 **PySide6**를 동적 링크하여 사용하고 있습니다. 단일 실행 파일(`.exe`) 배포 특성상 라이브러리 교체를 위한 재링크(Relink)를 원하시는 분은 하단의 연락처(이메일)로 요청해 주시면 빌드용 오브젝트 파일(Object File)을 제공해 드립니다.
+> * 게임 화면 내 텍스트 인식(OCR)을 위해 Apache 2.0 라이선스를 따르는 **Tesseract OCR** 및 **pytesseract**를 사용하고 있습니다.
 
 ---
 
@@ -144,10 +152,20 @@
 * **Game:** 디아블로 2: 레저렉션 (주로 전체화면 모드에서 테스트하며 창모드도 병행. 권장: 전체화면 모드)
 * **Build:** Python 3.12 (PySide6)
 
-**🛡️ 백신 오탐지 안내**
-키보드 단축키 감지(`keyboard`) 기능을 사용하여 일부 백신(Windows Defender 등)에서 **오탐지(False Positive)** 할 수 있습니다. 
-* 실행이 차단되거나 파일이 삭제되면, 폴더를 **백신 검사 제외 대상**으로 등록해 주세요.
-* 윈도우 **스마트 앱 컨트롤(Smart App Control)** 이 켜져 있다면 해제해야 실행 가능합니다.
+**🛡️ 백신 오탐지(False Positive) 대처 안내**
+이 프로그램은 게임 내 단축키 감지를 위해 `keyboard` 모듈을 사용합니다. 이로 인해 Windows Defender를 비롯한 일부 백신 프로그램이 이를 악성 코드로 오인하여 실행을 차단하거나 파일을 삭제할 수 있습니다. 
+*(쉬운 설명: 키보드 입력을 가로채는 기능은 해킹 프로그램들이 자주 쓰는 방식이라 백신이 일단 의심하고 차단하는 자연스러운 현상입니다.)*
+
+주로 다음과 같은 진단명으로 오탐지될 수 있습니다:
+* **Windows Defender:** `Program:Win32/Contebrew.A!ml` *(쉬운 설명: 진단명 끝의 '!ml'은 머신러닝(Machine Learning) 기반 탐지를 의미합니다. 명확한 악성코드라기보다는 프로그램의 작동 방식을 AI가 기계적으로 분석해 예방 차원에서 차단했을 확률이 높습니다.)*
+* **기타 백신 프로그램:** `Gen:Variant.Adware.Tedy.8867` 등
+
+만약 실행이 차단되거나 프로그램 파일이 사라진다면 아래의 방법들을 적용해 보세요:
+
+1. **백신 검사 제외 대상 등록 (권장):** 압축을 푼 DUO 프로그램 폴더 전체를 백신의 '검사 제외 항목(예외 처리)'으로 등록해 주세요.
+2. **스마트 앱 컨트롤 해제:** Windows 11의 **스마트 앱 컨트롤(Smart App Control)** 기능이 켜져 있다면 이를 해제해야 정상적으로 실행 가능합니다.
+3. **신뢰할 수 있는 경로에서 실행:** 바탕화면이나 다운로드 폴더 대신, `C:\Users\사용자이름\AppData\Local` 또는 `C:\Program Files` 하위에 새 폴더를 만들고 그곳에 압축을 풀어 실행하시면 시스템 관리 폴더로 인식되어 오탐지 확률을 줄일 수 있습니다.
+4. **GitHub Star 누르기:** 배포 중인 GitHub 레포지토리에 별(Star) ⭐을 많이 눌러주시면, 프로그램의 사용자 신뢰도 지표가 높아져 장기적으로 스마트스크린 등의 오탐지를 줄이는 데 도움이 될 수 있습니다.
 
 ---
 
@@ -247,6 +265,7 @@ A **multi-purpose utility overlay (DUO)** designed to comprehensively enhance yo
 | | `Tab` | (In Search) Toggle Unique / Runeword Tabs |
 | | `↑` / `↓` | (In Search) Navigate Search Results |
 | | `ESC` | Close Search Window |
+| **Item Recognition** | `Ctrl` + `R` | Start capturing automatic item recognition area |
 | **Buff Overlay** | `PageUp` / `PageDown` | Switch Buff Profiles |
 | | User Defined Keys | Trigger Specific Buff Timer |
 | **Speedrun Timer** | `Home` | Start / Pause Timer |
@@ -305,6 +324,13 @@ A **multi-purpose utility overlay (DUO)** designed to comprehensively enhance yo
 | `sounds/` | Place your custom `.mp3` or `.wav` files here for buff alerts. |
 | `item/data/` | Database files (`.json`, `.tsv`) used for the item search dictionary. |
 | `fonts/` | Default built-in fonts. You can add your own font files here. |
+| `models/` | Folder where modules required for automatic item recognition are stored. |
+
+---
+
+> **⚖️ Open Source License Notice:**
+> * This program dynamically links **PySide6**, which is licensed under LGPLv3. Due to the nature of single executable (`.exe`) distribution, if you wish to relink the library, please request the object files via the email provided below.
+> * This program uses **Tesseract OCR** and **pytesseract** for text recognition on the game screen, which are licensed under the Apache License 2.0.
 
 ---
 
@@ -315,10 +341,20 @@ A **multi-purpose utility overlay (DUO)** designed to comprehensively enhance yo
 * **Game:** Diablo 2: Resurrected (Recommended: Fullscreen Mode)
 * **Build:** Python 3.12 (PySide6)
 
-**🛡️ Security & False Positives**
-This program uses the `keyboard` module to detect hotkeys. Some antivirus software (e.g., Windows Defender) may flag it as a **False Positive**.
-* **Fix:** Add the program folder to your antivirus **exclusion list**.
-* Turn off **Smart App Control** in Windows 11 if it blocks execution.
+**🛡️ Security & False Positives (Antivirus Blocks/Deletions)**
+This program uses the `keyboard` module to detect your in-game hotkeys. Because keylogging-like behavior is common in malware, some antivirus software (like Windows Defender) may incorrectly flag and delete the file or block its execution. 
+*(Easy Explanation: Intercepting keyboard input is a method frequently used by malicious programs, so it is a natural phenomenon for antivirus software to be suspicious and block it by default.)*
+
+You may encounter false positive detection names such as:
+* **Windows Defender:** `Program:Win32/Contebrew.A!ml` *(Easy Explanation: The '!ml' stands for Machine Learning. This means the antivirus AI flagged the file based on behavioral guessing rather than an exact virus signature match.)*
+* **Other Antivirus Software:** `Gen:Variant.Adware.Tedy.8867`, etc.
+
+If the program won't run or the executable file is deleted automatically, please try the following steps:
+
+1. **Add to Exclusions (Recommended):** Add the extracted DUO folder to your antivirus **exclusion/exception list**.
+2. **Disable Smart App Control:** If you are using Windows 11, you may need to turn off **Smart App Control** if it blocks execution.
+3. **Run from a Trusted Directory:** Creating a folder and running the program from within `AppData/Local` or `Program Files` instead of your Desktop/Downloads folder can sometimes reduce the chances of false positives as they are standard system directories.
+4. **Star the GitHub Repo:** Leaving a Star ⭐ on this GitHub repository helps build the software's reputation metric over time, which may help reduce false positives from reputation-based filters like Windows SmartScreen.
 
 ---
 
